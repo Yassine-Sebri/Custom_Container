@@ -24,7 +24,7 @@ int main()
 	void *stack;
 	stack = malloc(STACK);
 	print_pid();
-	pid_t pid = clone(print_pid, (char *)stack + STACK, 0, 0);
+	pid_t pid = clone(print_pid, (char *)stack + STACK, CLONE_NEWPID, 0);
 	if (pid < 0)
 	{
 		print_err("calling clone");
@@ -33,4 +33,3 @@ int main()
 	free(stack);
 	return 0;
 }
-
