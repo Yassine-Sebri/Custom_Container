@@ -29,12 +29,17 @@ int main()
 {
 	void *stack;
 	stack = malloc(STACK);
-	pid_t pid = clone(shell, (char *)stack + STACK, CLONE_NEWPID | CLONE_VFORK | CLONE_NEWNS, 0);
+	pid_t pid = clone(shell, (char *)stack + STACK, CLONE_NEWPID | CLONE_NEWNS | CLONE_VFORK, 0);
 	if (pid < 0)
 	{
 		print_err("calling clone");
 		return 1;
 	}
 	free(stack);
+	if (mount("proc", "/proc", "proc", 0, "") != 0)
+	{
+		print_err("mounting proc");
+		return 1;
+	}
 	return 0;
 }
