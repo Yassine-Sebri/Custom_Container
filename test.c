@@ -19,11 +19,10 @@ void print_err(char const *const reason)
 
 int shell()
 {
-	char *hostname = "container";
 	if (mount("root mount", "root mount", NULL,
 			  MS_REC | MS_BIND | MS_PRIVATE, NULL) != 0)
 	{
-		print_err("mounting proc");
+		print_err("mounting root");
 		return 1;
 	}
 	mkdir("root mount/old", 0755);
@@ -35,14 +34,13 @@ int shell()
 		return 1;
 	}
 	umount2("/old", MNT_DETACH);
-	sethostname(hostname, strlen(hostname));
 	system("/bin/sh");
 	return 0;
 }
 
 int main()
 {
-	int flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUSER | CLONE_NEWUTS | CLONE_VFORK;
+	int flags = CLONE_NEWPID | CLONE_NEWNS | CLONE_NEWUSER | CLONE_VFORK;
 	void *stack;
 	stack = malloc(STACK);
 	pid_t pid = clone(shell, (char *)stack + STACK, flags, 0);
